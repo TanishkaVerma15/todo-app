@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Todo App</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+<style>
+
+    /* yeahhhhhh.... */
+
+    /* SWIMLANE VIEW */
+.swimlane-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 50px; 
+    padding: 20px;
+    border-right: 1px solid  #e0e0e0;
+}
+
+.lane {
+    background: transparent;
+     border-left: 1px solid  #e0e0e0;
+    padding: 15px;
+    min-height: 300px;
+}
+
+.lane h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ddd;
+}
+
+.lane .todo-card {
+    margin-bottom: 12px;
+}
+
+    .view-btn {
+    background: transparent;   
+    color: black;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    border-radius: 6px;
+}
+.view-btn.active {
+    background: black;
+    color: white;
+}
+   .top-row {
+    display: flex;
+    align-items: center;
+} 
+
+.filter-heading {
+     text-align: center;
+    margin: 20px 0 10px;
+    font-size: 18px;
+}
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 200px; 
+    row-gap: 300px;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-item label {
+    font-weight: 600;
+}
+
+.filter-item input,
+.filter-item select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+
+    .add-btn {
+    background: #007bff;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+    button {
+    border: none;
+    background: black;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+    /* ===== BODY ===== */
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fb;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* ===== HEADER (VIEW BUTTON) ===== */
+.header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.right-controls {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.right-controls button {
+    padding: 5px 8px;
+    cursor: pointer;
+}
+
+/* ===== TOP CONTROLS (MAIN FIX) ===== */
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+/* LEFT FIX */
+.left-controls {
+    flex:1;
+}
+
+/* CENTER PERFECT */
+.center-filters {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+.top-controls {
+    width: 100%;
+    margin: 20px 0;
+}
+
+
+/* RIGHT EMPTY SPACE FIX */
+.top-controls > div:last-child {
+    width: 120px; /* space balance */
+}
+
+.center-filters span {
+    padding: 6px 14px;
+    background: #eee;
+    border-radius: 20px;
+    cursor: pointer;
+     transition: 0.3s;
+}
+
+.center-filters span:hover {
+    background: #ddd;
+}
+
+.center-filters .active {
+    background: black;
+    color: white;
+}
+
+/* ===== FILTER ROW ===== */
+
+
+.filter-row input,
+.filter-row select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* ===== TODO LIST ===== */
+#todoListID {
+    padding: 0;
+}
+
+/* GRID VIEW */
+.grid-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+/* TODO CARD */
+.todo-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: 0.2s;
+}
+
+.todo-card:hover {
+    transform: translateY(-3px);
+}
+
+.completed {
+    color: grey;
+    text-decoration: line-through;
+}
+
+.todo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.todo-desc {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* ===== DIALOG ===== */
+/* DIALOG BOX */
+dialog {
+    width: 420px;
+    max-width: 90%;
+    padding: 25px 30px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+dialog form {
+    width: 100%;
+}
+
+/* INPUTS (checkbox excluded) */
+dialog input:not([type="checkbox"]),
+dialog select,
+dialog textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+dialog label {
+    font-weight: 500;
+}
+
+/* CHECKBOX PERFECT ALIGNMENT */
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.checkbox-row input[type="checkbox"] {
+    margin: 0;
+    position: relative;
+    top: 1px;
+}
+
+/* FOOTER (same layout: left - center - right) */
+.dialog-footer {
+    position: relative;
+    margin-top: 20px;
+    height: 40px;
+}
+
+/* Cancel - left */
+.dialog-footer span:first-child {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Button - center */
+.dialog-footer button {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Delete - right */
+.dialog-footer span:last-child {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+</style>
+
+    <script src="index.js"></script>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+
+    <!-- LEFT EMPTY (spacing ke liye) -->
+    <div></div>
+
+    <!-- CENTER TITLE -->
+    <h1>TODO APP</h1>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-controls">
+        <button class="add-btn" onclick="showDialog()">+ Add Todo</button>
+
+    </div>
+
+</div>
+
+
+   
+
+<!-- TOP BAR -->
+<div class="top-controls">
+
+    <!-- ROW 1 -->
+    <div class="top-row">
+
+        <!-- LEFT -->
+        <div class="left-controls">
+            <select onchange="setSort(this.value)">
+                <option value="">Sort</option>
+                <option value="newest">Newest to Oldest</option>
+                <option value="oldest">Oldest to Newest</option>
+                <option value="priorityHigh">Priority High to Low</option>
+                <option value="priorityLow">Priority Low to High</option>
+                <option value="dueSoon">Due Date Soon to Later</option>
+                <option value="dueLater">Due Date Later to Soon</option>
+            </select>
+        </div>
+
+        <!-- CENTER -->
+        <div class="center-filters">
+            <span onclick="setFilter('incomplete')" id="filter_incomplete">Incomplete</span>
+            <span onclick="setFilter('complete')" id="filter_complete">Complete</span>
+            <span onclick="setFilter('all')" id="filter_all">All</span>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-controls">
+            <span>View : </span>
+            <button class="view-btn" onclick="setView('grid')">⬛</button>
+            <button class="view-btn" onclick="setView('list')">☰</button>
+            <button class="view-btn" onclick="setView('swimlane')">📊</button>
+        </div>
+
+    </div>
+
+    <!-- FILTER HEADING -->
+    <h3 class="filter-heading">Filters : </h3>
+
+    <!-- LABELS ROW -->
+    <div class="filter-grid">
+
+    <div class="filter-item">
+        <label>Priority : </label>
+        <select onchange="setPriorityFilter(this.value)">
+            <option value="">Priority</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select>
+    </div>
+
+    <div class="filter-item">
+        <label>Due Date : </label>
+        <input type="date" onchange="dueDateFrom=this.value">
+        <input type="date" onchange="dueDateTo=this.value; renderTodoList()">
+    </div>
+
+    <div class="filter-item">
+        <label>Created Date : </label>
+        <input type="date" onchange="createdFrom=this.value">
+        <input type="date" onchange="createdTo=this.value; renderTodoList()">
+    </div>
+
+    <div class="filter-item">
+        <label>Updated Date : </label>
+        <input type="date" onchange="updatedFrom=this.value">
+        <input type="date" onchange="updatedTo=this.value; renderTodoList()">
+    </div>
+
+</div>
+
+</div>
+
+<ul id="todoListID"></ul>
+
+    <!-- ADD TODO -->
+    <dialog id="addTodoDialog">
+        <div style="display:flex; justify-content: space-between; align-items:center; position: relative;">
+            <h2 style="margin:0;">Add A Todo</h2>
+            <span onclick="closeAddDialog()" 
+                style="position:absolute; top:-10px; right:-10px; cursor:pointer; font-size:15px; color:black;">
+                ✖
+            </span>
+        </div>
+
+        <label>Title:</label>
+        <input id="todoInputID"/>
+
+        <label>Description:</label>
+        <textarea id="todoDescID" rows="3"></textarea>
+
+        <div class="checkbox-row"style="display: flex; align-items: center; gap: 6px;">
+            <label for="todoCompletionID">Completed : </label>
+            <input type="checkbox" id="todoCompletionID" />
+        </div>
+
+        <label>Status:</label>
+        <select id="todoStatusID">
+            <option>Todo</option>
+            <option>In-Progress</option>
+            <option>In-Review</option>
+            <option>Done</option>
+        </select>
+
+        <label>Priority:</label>
+        <select id="todoPriorityID">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select>
+
+        <label>Due Date:</label>
+        <input type="date" id="todoDueDateID"/>
+
+        <div style="display:flex; justify-content: space-between; margin-top:15px;">
+            <span onclick="closeAddDialog()" 
+                style="text-decoration: underline; cursor:pointer; color:black;">
+                Cancel
+            </span>
+            <button onclick="addTodoFunction()">Add Todo</button>
+        </div>
+    </dialog>
+
+    <!-- EDIT TODO -->
+    <dialog id="editTodoDialog">
+
+        <div style="display:flex; justify-content: space-between; align-items:center; position: relative;">
+            <h2 style="margin:0;">Edit Todo</h2>
+            <span onclick="closeEditDialog()" 
+                style="position:absolute; top:-10px; right:-10px; cursor:pointer; font-size:15px; color:black;">
+                ✖
+            </span>
+        </div>
+
+        <label>Title:</label>
+        <input id="editTodoTitleID"/>
+
+        <label>Description:</label>
+        <textarea id="editTodoDescID" rows="3"></textarea>
+
+        <div class="checkbox-row">
+    <label>Completed : </label>
+    <input type="checkbox" id="editTodoCompletionID">
+</div>
+
+
+        <label>Status:</label>
+        <select id="editTodoStatusID">
+            <option>Todo</option>
+            <option>In-Progress</option>
+            <option>In-Review</option>
+            <option>Done</option>
+        </select>
+
+        <label>Priority:</label>
+        <select id="editTodoPriorityID">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select>
+
+        <label>Due Date:</label>
+        <input type="date" id="editTodoDueDateID"/>
+
+        <div class="dialog-footer">
+        <span onclick="closeEditDialog()" style="text-decoration: underline; cursor:pointer; color:black;">Cancel</span>
+
+        <button onclick="updateTodo()">Update</button>
+
+        <span onclick="deleteTodo()" style="color:red; cursor:pointer; text-decoration: underline;">
+        Delete
+        </span>
+        </div>
+    </dialog>
+
+    <!-- DELETE CONFIRM -->
+    <dialog id="deleteConfirmDialog">
+        <center>
+            <h3 id="deleteTodoText">Are you sure?</h3>
+
+            <br>
+
+            <button onclick="confirmDelete()">Yes, Delete</button>
+
+            <button onclick="cancelDelete()" style="margin-left:10px;">
+                Cancel
+            </button>
+        </center>
+    </dialog>
+
+</div>
+</body>
+</html>
