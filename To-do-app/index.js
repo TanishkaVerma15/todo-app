@@ -1,6 +1,5 @@
 var todoList = []
 let draggedTodoId = null;
-//yeahhh.....
 
 let currentFilter = "";
 let selectedPriority = "";
@@ -434,7 +433,7 @@ function drag(event, id){
     draggedTodoId = id;
 }
 function allowDrop(event){
-    event.preventDefault(); // ye hona zaroori hai
+    event.preventDefault(); 
 }
 function drop(event, status){
     event.preventDefault();
@@ -442,9 +441,74 @@ function drop(event, status){
     let todo = todoList.find(t => t.ID == draggedTodoId);
 
     if(todo){
-        todo.todoStatus = status;      // ✅ status change
-        todo.updatedDate = Date.now(); // optional
+        todo.todoStatus = status;     
+        todo.updatedDate = Date.now(); 
     }
 
-    renderTodoList(); // ✅ UI update
+    renderTodoList(); 
+}
+
+function insertDummyTodo(){
+    const dummyTodos = [
+        {
+            ID: Date.now() + 1,
+            title: "Complete UI Design",
+            description: "Improve layout and spacing of todo app",
+            completionStatus: false,
+            createdDate: Date.now(),
+            updatedDate: Date.now(),
+            dueDate: "2026-04-18",
+            priority: "High",
+            todoStatus: "Todo"
+        },
+        {
+            ID: Date.now() + 2,
+            title: "Fix Drag and Drop",
+            description: "Check swimlane drag and drop feature properly",
+            completionStatus: false,
+            createdDate: Date.now(),
+            updatedDate: Date.now(),
+            dueDate: "2026-04-20",
+            priority: "Medium",
+            todoStatus: "In-Progress"
+        },
+        {
+            ID: Date.now() + 3,
+            title: "Add Footer",
+            description: "Create professional fixed footer with LinkedIn link",
+            completionStatus: false,
+            createdDate: Date.now(),
+            updatedDate: Date.now(),
+            dueDate: "2026-04-22",
+            priority: "Low",
+            todoStatus: "In-Review"
+        },
+        {
+            ID: Date.now() + 4,
+            title: "Deploy Project",
+            description: "Push final code to GitHub and deploy on Vercel",
+            completionStatus: true,
+            createdDate: Date.now(),
+            updatedDate: Date.now(),
+            dueDate: "2026-04-25",
+            priority: "High",
+            todoStatus: "Done"
+        }
+    ];
+
+    todoList.push(...dummyTodos);
+    renderTodoList();
+}
+
+function toggleFilterBox(){
+    let boxBody = document.getElementById("filterBoxBody");
+    let icon = document.getElementById("filterToggleIcon");
+
+    if(boxBody.style.display === "none"){
+        boxBody.style.display = "block";
+        icon.innerText = "▼";
+    } else {
+        boxBody.style.display = "none";
+        icon.innerText = "►";
+    }
 }
